@@ -1,0 +1,1336 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ponte do Bem - Protótipo Interativo MVP</title>
+    <!-- Tailwind CSS para estilização rápida e moderna -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome para ícones premium -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Chart.js para gráficos reais de Prestação de Contas -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            blue: '#1E3A8A', // Azul Confiança
+                            emerald: '#10B981', // Verde Impacto/Sucesso
+                            accent: '#F59E0B', // Amarelo Destaque/Rank
+                            dark: '#0F172A',
+                            light: '#F8FAFC'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        /* Custom scrollbar para simular tela de celular fluida */
+        .mobile-screen::-webkit-scrollbar {
+            width: 4px;
+        }
+        .mobile-screen::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+        .mobile-screen::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 4px;
+        }
+        .mobile-screen::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+    </style>
+</head>
+<body class="bg-slate-900 text-slate-100 font-sans min-h-screen flex flex-col xl:flex-row">
+
+    <!-- PAINEL LATERAL ESQUERDO: UX/UI Guia para a Banca do MBA -->
+    <div class="w-full xl:w-96 bg-slate-850 p-6 xl:p-8 border-b xl:border-b-0 xl:border-r border-slate-800 flex flex-col justify-between shrink-0">
+        <div>
+            <div class="flex items-center gap-3 mb-6">
+                <div class="w-10 h-10 bg-brand-emerald rounded-xl flex items-center justify-center text-white font-bold text-xl shadow-lg shadow-emerald-900/30">
+                    <i class="fa-solid fa-bridge"></i>
+                </div>
+                <div>
+                    <h1 class="text-xl font-bold tracking-tight">Ponte do Bem</h1>
+                    <p class="text-xs text-brand-emerald font-semibold">PROTÓTIPO MVP INTERATIVO</p>
+                </div>
+            </div>
+
+            <div class="bg-slate-800/60 rounded-xl p-4 border border-slate-700/50 mb-6">
+                <h3 class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-2">Sobre o MVP (TCC MBA)</h3>
+                <p class="text-xs leading-relaxed text-slate-300">
+                    Este protótipo de alta fidelidade valida as duas pontas do marketplace social: a prestação de contas simplificada pelas <strong>OSCs</strong> e a descoberta confiável e gamificada pelos <strong>Doadores</strong>.
+                </p>
+            </div>
+
+            <div class="space-y-4">
+                <h3 class="text-xs font-bold uppercase tracking-wider text-slate-400">Instruções de Teste</h3>
+                
+                <div class="p-3 bg-slate-800/40 rounded-lg border border-slate-700/30 flex gap-3 items-start">
+                    <div class="text-brand-emerald mt-1"><i class="fa-solid fa-users"></i></div>
+                    <div>
+                        <h4 class="text-xs font-bold text-white">1. Alterne as Personas</h4>
+                        <p class="text-[11px] text-slate-400">Use o seletor no topo do smartphone simulado para alternar instantaneamente entre o fluxo do Doador e da OSC.</p>
+                    </div>
+                </div>
+
+                <div class="p-3 bg-slate-800/40 rounded-lg border border-slate-700/30 flex gap-3 items-start">
+                    <div class="text-brand-accent mt-1"><i class="fa-solid fa-star"></i></div>
+                    <div>
+                        <h4 class="text-xs font-bold text-white">2. Sistema de Ranking</h4>
+                        <p class="text-[11px] text-slate-400">As OSCs ganham pontuação de confiança à medida que atualizam o balanço de forma transparente.</p>
+                    </div>
+                </div>
+
+                <div class="p-3 bg-slate-800/40 rounded-lg border border-slate-700/30 flex gap-3 items-start">
+                    <div class="text-brand-emerald mt-1"><i class="fa-solid fa-circle-dollar-to-slot"></i></div>
+                    <div>
+                        <h4 class="text-xs font-bold text-white">3. Doações Inteligentes</h4>
+                        <p class="text-[11px] text-slate-400">Experimente doar para uma OSC específica ou selecione doar para um grupo (bucket) inteiro de causas.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="mt-8 pt-6 border-t border-slate-800 text-center xl:text-left">
+            <span class="text-[10px] text-slate-500 block">MBA em Gestão de Produtos de Software</span>
+            <span class="text-xs text-slate-400 font-medium">Design focado em Confiança & Usabilidade</span>
+        </div>
+    </div>
+
+    <!-- ÁREA CENTRAL: O SIMULADOR DE SMARTPHONE -->
+    <div class="flex-1 flex flex-col items-center justify-center p-4 md:p-8 bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950">
+        
+        <!-- Toggle de Persona Externo (Feedback Visual Extra para Facilidade de Uso) -->
+        <div class="flex bg-slate-800 p-1 rounded-2xl mb-6 shadow-xl border border-slate-700/50">
+            <button onclick="switchRole('donor')" id="btn-role-donor" class="px-6 py-2.5 rounded-xl text-xs font-bold transition-all duration-300 flex items-center gap-2 bg-brand-emerald text-slate-950 shadow-md">
+                <i class="fa-solid fa-hand-holding-heart"></i> Visão Doador
+            </button>
+            <button onclick="switchRole('osc')" id="btn-role-osc" class="px-6 py-2.5 rounded-xl text-xs font-bold transition-all duration-300 flex items-center gap-2 text-slate-400 hover:text-white">
+                <i class="fa-solid fa-building-ngo"></i> Visão OSC
+            </button>
+        </div>
+
+        <!-- Moldura de Smartphone Premium -->
+        <div class="relative w-[385px] h-[780px] bg-slate-950 rounded-[50px] p-3 shadow-[0_0_80px_rgba(16,185,129,0.15)] border-4 border-slate-800">
+            <!-- Notch/Câmera Frontal -->
+            <div class="absolute top-4 left-1/2 transform -translate-x-1/2 w-32 h-6 bg-slate-950 rounded-full z-50 flex items-center justify-between px-4">
+                <div class="w-3 h-3 bg-slate-800 rounded-full"></div>
+                <div class="w-12 h-1.5 bg-slate-800 rounded-full"></div>
+            </div>
+
+            <!-- Botões Laterais Simulados -->
+            <div class="absolute -left-1 top-24 w-1 h-12 bg-slate-700 rounded-r"></div>
+            <div class="absolute -left-1 top-40 w-1 h-16 bg-slate-700 rounded-r"></div>
+            <div class="absolute -right-1 top-32 w-1 h-20 bg-slate-700 rounded-l"></div>
+
+            <!-- TELA INTERNA (Simulação de Aplicativo iOS/Android) -->
+            <div class="w-full h-full bg-slate-50 text-slate-900 rounded-[40px] overflow-hidden flex flex-col relative select-none">
+                
+                <!-- Barra de Status do Sistema -->
+                <div class="h-8 bg-slate-50 flex justify-between items-end px-6 pb-1 text-xs font-semibold text-slate-600 z-40">
+                    <span id="system-time">18:07</span>
+                    <div class="flex items-center gap-1.5">
+                        <i class="fa-solid fa-signal"></i>
+                        <i class="fa-solid fa-wifi"></i>
+                        <i class="fa-solid fa-battery-three-quarters"></i>
+                    </div>
+                </div>
+
+                <!-- SUB-TELA DINÂMICA: CONTAINER PRINCIPAL -->
+                <div id="app-container" class="flex-1 overflow-y-auto mobile-screen flex flex-col pb-16">
+                    
+                    <!-- CONTEÚDO SERÁ INJETADO DINAMICAMENTE AQUI -->
+
+                </div>
+
+                <!-- BARRA DE NAVEGAÇÃO INFERIOR SIMULADA -->
+                <div id="bottom-nav" class="absolute bottom-0 inset-x-0 h-16 bg-white border-t border-slate-100 flex justify-around items-center px-4 z-40">
+                    <!-- Botões de Navegação Dinâmicos Baseados no Papel -->
+                </div>
+
+                <!-- Home Indicator (Barrinha inferior do iPhone) -->
+                <div class="absolute bottom-1 left-1/2 transform -translate-x-1/2 w-32 h-1 bg-slate-300 rounded-full z-50"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL DE NOTIFICAÇÃO / TOAST PERSONALIZADO (Evita Uso de alerts) -->
+    <div id="toast" class="fixed bottom-6 right-6 bg-slate-800 border border-slate-700 text-white px-6 py-4 rounded-2xl shadow-2xl flex items-center gap-3 transform translate-y-20 opacity-0 transition-all duration-300 z-50">
+        <div id="toast-icon" class="text-brand-emerald text-xl">
+            <i class="fa-solid fa-circle-check"></i>
+        </div>
+        <div>
+            <p id="toast-title" class="font-bold text-sm text-slate-100"></p>
+            <p id="toast-desc" class="text-xs text-slate-400"></p>
+        </div>
+    </div>
+
+    <!-- JAVASCRIPT: MOTOR DE INTERATIVIDADE E UX -->
+    <script>
+        // --- BASE DE DADOS DO PROTÓTIPO (Simula Banco de Dados local/Firebase) ---
+        let state = {
+            currentRole: 'donor', // 'donor' | 'osc'
+            donorPage: 'explore', // 'explore' | 'detail' | 'groups' | 'profile' | 'history'
+            oscPage: 'dashboard', // 'dashboard' | 'post' | 'financials' | 'profile'
+            selectedOscId: 1,
+            selectedCategory: 'all',
+            searchQuery: '',
+            
+            // Dados Mockados das OSCs (Marketplace)
+            oscs: [
+                {
+                    id: 1,
+                    name: 'Instituto Patinhas Felizes',
+                    category: 'animais',
+                    logo: 'https://images.unsplash.com/photo-1543466835-00a7907e9de1?auto=format&fit=crop&q=80&w=150',
+                    banner: 'https://images.unsplash.com/photo-1548199973-03cce0bbc87b?auto=format&fit=crop&q=80&w=400',
+                    rank: 4.9,
+                    badge: 'Transparência Diamante',
+                    badgeColor: 'emerald',
+                    postsCount: 18,
+                    reviewsCount: 142,
+                    totalDonations: 'R$ 48.500',
+                    mission: 'Resgatar, reabilitar e encontrar lares responsáveis para cães e gatos em situação de rua extrema.',
+                    balance: {
+                        receitas: 52000,
+                        despesas: {
+                            'Veterinário & Clínicas': 24000,
+                            'Ração & Nutrição': 16000,
+                            'Infraestrutura & Resgate': 8000,
+                            'Administração & Equipe': 4000
+                        }
+                    },
+                    reviews: [
+                        { user: 'Mariana Silva', text: 'Melhor ONG de acolhimento animal de São Paulo! Sempre mandam fotos dos bichinhos que ajudei.', rating: 5 },
+                        { user: 'Carlos Eduardo', text: 'Prestam contas mensais centavo por centavo. Super confio.', rating: 5 }
+                    ]
+                },
+                {
+                    id: 2,
+                    name: 'Sementes do Amanhã',
+                    category: 'educacao',
+                    logo: 'https://images.unsplash.com/photo-1488521787991-ed7bbaae773c?auto=format&fit=crop&q=80&w=150',
+                    banner: 'https://images.unsplash.com/photo-1503676260728-1c00da094a0b?auto=format&fit=crop&q=80&w=400',
+                    rank: 4.7,
+                    badge: 'Transparência Ouro',
+                    badgeColor: 'blue',
+                    postsCount: 12,
+                    reviewsCount: 94,
+                    totalDonations: 'R$ 31.200',
+                    mission: 'Oferecer educação complementar, oficinas artísticas e alfabetização digital para crianças em situação de vulnerabilidade social.',
+                    balance: {
+                        receitas: 35000,
+                        despesas: {
+                            'Professores & Tutores': 18000,
+                            'Material Didático': 7000,
+                            'Alimentação': 6000,
+                            'Equipamentos de TI': 4000
+                        }
+                    },
+                    reviews: [
+                        { user: 'Aline Santos', text: 'Trabalho incrível de transformação comunitária. Meus filhos amam as oficinas.', rating: 5 },
+                        { user: 'Roberto Costa', text: 'Acompanhamento claro do destino dos recursos. Indico muito!', rating: 4 }
+                    ]
+                },
+                {
+                    id: 3,
+                    name: 'Aliança Prato Cheio',
+                    category: 'fome',
+                    logo: 'https://images.unsplash.com/photo-1593113598332-cd288d649433?auto=format&fit=crop&q=80&w=150',
+                    banner: 'https://images.unsplash.com/photo-1488521787991-ed7bbaae773c?auto=format&fit=crop&q=80&w=400',
+                    rank: 4.8,
+                    badge: 'Transparência Diamante',
+                    badgeColor: 'emerald',
+                    postsCount: 22,
+                    reviewsCount: 210,
+                    totalDonations: 'R$ 89.100',
+                    mission: 'Combater o desperdício de alimentos conectando excedentes de comércios e restaurantes a famílias famintas de periferias.',
+                    balance: {
+                        receitas: 95000,
+                        despesas: {
+                            'Logística & Combustível': 45000,
+                            'Cozinhas Comunitárias': 30000,
+                            'Embalagens Biodegradáveis': 10000,
+                            'Custos de Operação': 10000
+                        }
+                    },
+                    reviews: [
+                        { user: 'Thiago Mendes', text: 'Saber que centenas de refeições são salvas todos os dias é o que me faz continuar doando.', rating: 5 }
+                    ]
+                }
+            ],
+
+            // Posts dinâmicos (OSCs publicam aqui e aparece na hora!)
+            posts: [
+                {
+                    id: 101,
+                    oscId: 1,
+                    title: 'Resgate do Pipoca bem sucedido!',
+                    date: 'Hoje, 10h',
+                    desc: 'Encontramos o Pipoca assustado perto da rodovia. Passou por exames veterinários e já está pronto para adoção graças às últimas doações de vocês!',
+                    img: 'https://images.unsplash.com/photo-1537151608828-ea2b117b6b0e?auto=format&fit=crop&q=80&w=400'
+                },
+                {
+                    id: 102,
+                    oscId: 2,
+                    title: 'Nova sala de informática inaugurada',
+                    date: 'Ontem, 14h',
+                    desc: 'Graças ao fundo de Educação do App Ponte do Bem, compramos 5 novos computadores. Aulas de programação começam na próxima segunda!',
+                    img: 'https://images.unsplash.com/photo-1427504494785-3a9ca7044f45?auto=format&fit=crop&q=80&w=400'
+                }
+            ],
+
+            // Histórico de Doações do Doador
+            myDonations: [
+                { id: 1, oscName: 'Instituto Patinhas Felizes', value: 50, date: '12/06/2026', type: 'Pix' },
+                { id: 2, oscName: 'Sementes do Amanhã', value: 100, date: '04/06/2026', type: 'Cartão de Crédito' }
+            ]
+        };
+
+        // --- SISTEMA DE TOASTS ---
+        function triggerToast(title, desc, type = 'success') {
+            const toast = document.getElementById('toast');
+            const icon = document.getElementById('toast-icon');
+            const titleEl = document.getElementById('toast-title');
+            const descEl = document.getElementById('toast-desc');
+
+            titleEl.textContent = title;
+            descEl.textContent = desc;
+
+            if (type === 'success') {
+                icon.innerHTML = '<i class="fa-solid fa-circle-check text-brand-emerald"></i>';
+            } else {
+                icon.innerHTML = '<i class="fa-solid fa-circle-info text-brand-accent"></i>';
+            }
+
+            toast.classList.remove('translate-y-20', 'opacity-0');
+            toast.classList.add('translate-y-0', 'opacity-100');
+
+            setTimeout(() => {
+                toast.classList.remove('translate-y-0', 'opacity-100');
+                toast.classList.add('translate-y-20', 'opacity-0');
+            }, 4000);
+        }
+
+        // --- ATUALIZADOR DE HORÁRIO ---
+        function updateSystemTime() {
+            const now = new Date();
+            const hours = String(now.getHours()).padStart(2, '0');
+            const minutes = String(now.getMinutes()).padStart(2, '0');
+            document.getElementById('system-time').innerText = `${hours}:${minutes}`;
+        }
+        setInterval(updateSystemTime, 60000);
+
+        // --- MOTOR DE NAVEGAÇÃO E RECOVERY ---
+        function switchRole(role) {
+            state.currentRole = role;
+            
+            // UI Toggles
+            const btnDonor = document.getElementById('btn-role-donor');
+            const btnOsc = document.getElementById('btn-role-osc');
+
+            if (role === 'donor') {
+                btnDonor.className = "px-6 py-2.5 rounded-xl text-xs font-bold transition-all duration-300 flex items-center gap-2 bg-brand-emerald text-slate-950 shadow-md";
+                btnOsc.className = "px-6 py-2.5 rounded-xl text-xs font-bold transition-all duration-300 flex items-center gap-2 text-slate-400 hover:text-white";
+                triggerToast('Modo Doador Ativo', 'Buscando e descobrindo causas sociais.');
+            } else {
+                btnOsc.className = "px-6 py-2.5 rounded-xl text-xs font-bold transition-all duration-300 flex items-center gap-2 bg-brand-emerald text-slate-950 shadow-md";
+                btnDonor.className = "px-6 py-2.5 rounded-xl text-xs font-bold transition-all duration-300 flex items-center gap-2 text-slate-400 hover:text-white";
+                triggerToast('Painel OSC Ativo', 'Gerenciando Instituto Patinhas Felizes.');
+            }
+
+            renderApp();
+        }
+
+        // --- RENDERIZADORES DO APP ---
+        function renderApp() {
+            const container = document.getElementById('app-container');
+            container.innerHTML = ''; // Limpar container anterior
+
+            if (state.currentRole === 'donor') {
+                renderDonorFlow(container);
+                renderBottomNav('donor');
+            } else {
+                renderOscFlow(container);
+                renderBottomNav('osc');
+            }
+        }
+
+        // --- TRILHA 1: DOADOR FLOWS ---
+        function renderDonorFlow(container) {
+            switch (state.donorPage) {
+                case 'explore':
+                    renderExplorePage(container);
+                    break;
+                case 'detail':
+                    renderDetailPage(container);
+                    break;
+                case 'groups':
+                    renderGroupsPage(container);
+                    break;
+                case 'history':
+                    renderHistoryPage(container);
+                    break;
+                case 'profile':
+                    renderDonorProfilePage(container);
+                    break;
+            }
+        }
+
+        function renderExplorePage(container) {
+            // Header
+            container.innerHTML = `
+                <div class="p-5 bg-white border-b border-slate-100 flex items-center justify-between sticky top-0 z-30">
+                    <div>
+                        <p class="text-xs text-slate-400 font-semibold uppercase tracking-wider">Impacto de Hoje</p>
+                        <h2 class="text-lg font-extrabold text-slate-800">Conectar & Doar</h2>
+                    </div>
+                    <div class="w-10 h-10 bg-slate-100 rounded-full flex items-center justify-center text-slate-600 relative">
+                        <i class="fa-solid fa-bell"></i>
+                        <span class="absolute top-1 right-1 w-2.5 h-2.5 bg-red-500 rounded-full border-2 border-white"></span>
+                    </div>
+                </div>
+
+                <!-- Barra de Busca -->
+                <div class="p-4 bg-white">
+                    <div class="relative flex items-center bg-slate-100 rounded-2xl px-4 py-3">
+                        <i class="fa-solid fa-magnifying-glass text-slate-400 mr-3"></i>
+                        <input type="text" oninput="handleSearch(this)" placeholder="Buscar OSCs por nome ou missão..." class="bg-transparent border-none text-sm outline-none w-full text-slate-700" value="${state.searchQuery}">
+                    </div>
+                </div>
+
+                <!-- Filtros de Categorias -->
+                <div class="px-4 py-2 flex gap-2 overflow-x-auto whitespace-nowrap bg-white pb-4 scrollbar-hide">
+                    <button onclick="setCategory('all')" class="px-4 py-2 rounded-xl text-xs font-bold transition ${state.selectedCategory === 'all' ? 'bg-brand-emerald text-slate-950' : 'bg-slate-100 text-slate-500'}">Todas</button>
+                    <button onclick="setCategory('animais')" class="px-4 py-2 rounded-xl text-xs font-bold transition ${state.selectedCategory === 'animais' ? 'bg-brand-emerald text-slate-950' : 'bg-slate-100 text-slate-500'}"><i class="fa-solid fa-paw mr-1.5"></i> Animais</button>
+                    <button onclick="setCategory('educacao')" class="px-4 py-2 rounded-xl text-xs font-bold transition ${state.selectedCategory === 'educacao' ? 'bg-brand-emerald text-slate-950' : 'bg-slate-100 text-slate-500'}"><i class="fa-solid fa-graduation-cap mr-1.5"></i> Educação</button>
+                    <button onclick="setCategory('fome')" class="px-4 py-2 rounded-xl text-xs font-bold transition ${state.selectedCategory === 'fome' ? 'bg-brand-emerald text-slate-950' : 'bg-slate-100 text-slate-500'}"><i class="fa-solid fa-bowl-food mr-1.5"></i> Fome</button>
+                </div>
+
+                <!-- Doações em Grupo (Banner) -->
+                <div class="p-4">
+                    <div onclick="navigateDonor('groups')" class="bg-gradient-to-r from-brand-blue to-blue-700 rounded-3xl p-5 text-white shadow-xl cursor-pointer hover:shadow-2xl transition duration-300 relative overflow-hidden">
+                        <div class="absolute -right-6 -bottom-6 text-white/10 text-9xl font-bold"><i class="fa-solid fa-layer-group"></i></div>
+                        <div class="relative z-10">
+                            <span class="bg-white/20 text-[10px] uppercase font-extrabold tracking-wider px-2.5 py-1 rounded-full text-white">Inovação Ponte do Bem</span>
+                            <h3 class="font-black text-xl mt-3 leading-tight">Doação Multipromocional</h3>
+                            <p class="text-xs text-blue-100 mt-1 max-w-[200px]">Apoie até 5 ONGs do mesmo ecossistema com uma única doação.</p>
+                            <div class="mt-4 flex items-center text-xs font-bold text-white gap-2">
+                                Experimentar <i class="fa-solid fa-arrow-right-long"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Lista de OSCs (Marketplace Grid) -->
+                <div class="px-4 pb-4">
+                    <h3 class="font-extrabold text-slate-700 text-sm mb-4">Organizações Verificadas</h3>
+                    <div id="osc-list" class="space-y-4">
+                        ${renderOscListCards()}
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderOscListCards() {
+            const filtered = state.oscs.filter(osc => {
+                const matchesCat = state.selectedCategory === 'all' || osc.category === state.selectedCategory;
+                const matchesSearch = osc.name.toLowerCase().includes(state.searchQuery.toLowerCase()) || 
+                                      osc.mission.toLowerCase().includes(state.searchQuery.toLowerCase());
+                return matchesCat && matchesSearch;
+            });
+
+            if (filtered.length === 0) {
+                return `
+                    <div class="text-center py-12 px-4 bg-white rounded-2xl">
+                        <i class="fa-regular fa-folder-open text-slate-300 text-4xl mb-3"></i>
+                        <p class="text-sm text-slate-500 font-medium">Nenhuma ONG encontrada para sua busca.</p>
+                    </div>
+                `;
+            }
+
+            return filtered.map(osc => `
+                <div onclick="openOscDetail(${osc.id})" class="bg-white rounded-3xl p-4 border border-slate-100 shadow-sm hover:shadow-md transition duration-300 flex items-start gap-4 cursor-pointer relative">
+                    <div class="w-14 h-14 bg-slate-50 rounded-2xl border border-slate-100 overflow-hidden flex-shrink-0">
+                        <img src="${osc.logo}" alt="${osc.name}" class="w-full h-full object-cover">
+                    </div>
+                    <div class="flex-1">
+                        <div class="flex items-center gap-1.5">
+                            <span class="text-[10px] text-white font-extrabold bg-brand-${osc.badgeColor} px-2 py-0.5 rounded-full uppercase tracking-wider">${osc.badge}</span>
+                            <span class="text-xs font-black text-brand-accent flex items-center gap-1">
+                                <i class="fa-solid fa-star"></i> ${osc.rank}
+                            </span>
+                        </div>
+                        <h4 class="font-bold text-slate-800 text-sm mt-1.5 leading-snug">${osc.name}</h4>
+                        <p class="text-xs text-slate-500 line-clamp-2 mt-1 leading-relaxed">${osc.mission}</p>
+                        
+                        <div class="mt-3 flex items-center justify-between border-t border-slate-50 pt-2.5">
+                            <span class="text-[10px] text-slate-400 font-bold uppercase"><i class="fa-solid fa-receipt mr-1"></i> Transparência Ativa</span>
+                            <span class="text-xs font-extrabold text-brand-blue flex items-center gap-1">Ver Perfil <i class="fa-solid fa-chevron-right text-[10px]"></i></span>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function renderDetailPage(container) {
+            const osc = state.oscs.find(o => o.id === state.selectedOscId);
+            if (!osc) return;
+
+            // Filtra posts desta OSC específica
+            const oscPosts = state.posts.filter(p => p.oscId === osc.id);
+
+            container.innerHTML = `
+                <!-- Banner & Logo -->
+                <div class="relative h-44 bg-slate-100 flex-shrink-0">
+                    <img src="${osc.banner}" alt="Banner" class="w-full h-full object-cover">
+                    <div class="absolute top-4 left-4">
+                        <button onclick="navigateDonor('explore')" class="w-10 h-10 bg-white/90 backdrop-blur rounded-full flex items-center justify-center text-slate-800 shadow-lg">
+                            <i class="fa-solid fa-arrow-left"></i>
+                        </button>
+                    </div>
+                    <div class="absolute -bottom-10 left-6 w-20 h-20 bg-white rounded-3xl p-1.5 shadow-xl border border-slate-100">
+                        <img src="${osc.logo}" alt="${osc.name}" class="w-full h-full object-cover rounded-2xl">
+                    </div>
+                </div>
+
+                <!-- Info Primárias -->
+                <div class="px-6 pt-12 bg-white pb-6">
+                    <div class="flex items-center gap-2">
+                        <span class="text-[9px] text-white font-extrabold bg-brand-${osc.badgeColor} px-2 py-0.5 rounded-full uppercase tracking-wider">${osc.badge}</span>
+                        <span class="text-xs font-black text-brand-accent flex items-center gap-0.5">
+                            <i class="fa-solid fa-star"></i> ${osc.rank}
+                        </span>
+                    </div>
+                    <h2 class="text-lg font-black text-slate-800 mt-2">${osc.name}</h2>
+                    <p class="text-xs text-slate-500 font-medium leading-relaxed mt-2">${osc.mission}</p>
+                    
+                    <!-- Stats Simples -->
+                    <div class="grid grid-cols-3 gap-3 mt-4 pt-4 border-t border-slate-50 text-center">
+                        <div>
+                            <span class="text-xs text-slate-400 block font-medium">Doações</span>
+                            <span class="font-extrabold text-sm text-slate-700">${osc.totalDonations}</span>
+                        </div>
+                        <div>
+                            <span class="text-xs text-slate-400 block font-medium">Publicações</span>
+                            <span class="font-extrabold text-sm text-slate-700">${osc.postsCount}</span>
+                        </div>
+                        <div>
+                            <span class="text-xs text-slate-400 block font-medium">Seguidores</span>
+                            <span class="font-extrabold text-sm text-slate-700">${osc.reviewsCount}</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- TABS DE DETALHES -->
+                <div class="bg-white border-y border-slate-100 sticky top-0 z-20 flex justify-around">
+                    <button onclick="switchTab('feed')" id="tab-btn-feed" class="flex-1 py-3.5 text-xs font-bold text-brand-emerald border-b-2 border-brand-emerald text-center">Feed de Fotos</button>
+                    <button onclick="switchTab('finance')" id="tab-btn-finance" class="flex-1 py-3.5 text-xs font-bold text-slate-400 text-center">Balanço / Transparência</button>
+                    <button onclick="switchTab('reviews')" id="tab-btn-reviews" class="flex-1 py-3.5 text-xs font-bold text-slate-400 text-center">Avaliações</button>
+                </div>
+
+                <!-- CONTEÚDO DAS TABS -->
+                <div id="tab-content" class="p-4">
+                    <!-- Default Feed -->
+                    <div id="tab-feed" class="space-y-4">
+                        ${renderPostsTab(oscPosts)}
+                    </div>
+                    
+                    <!-- Aba Transparência Financeira -->
+                    <div id="tab-finance" class="hidden space-y-4">
+                        <div class="bg-white rounded-3xl p-4 border border-slate-100 shadow-sm">
+                            <h3 class="font-bold text-xs text-slate-400 uppercase tracking-wider mb-2">Destino de cada R$ 1,00 doado</h3>
+                            <!-- Canvas para gráfico real Chart.js -->
+                            <div class="h-44 w-full relative flex items-center justify-center">
+                                <canvas id="financeChart" class="max-h-full"></canvas>
+                            </div>
+                            
+                            <div class="mt-4 space-y-2 pt-4 border-t border-slate-100">
+                                ${Object.entries(osc.balance.despesas).map(([key, value]) => `
+                                    <div class="flex items-center justify-between text-xs">
+                                        <span class="text-slate-500 font-medium flex items-center gap-1.5">
+                                            <span class="w-2.5 h-2.5 rounded-full inline-block" style="background-color: ${getColorForKey(key)}"></span>
+                                            ${key}
+                                        </span>
+                                        <span class="font-bold text-slate-800">R$ ${value.toLocaleString('pt-BR')}</span>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        </div>
+
+                        <!-- Balanço Consolidado -->
+                        <div class="bg-slate-100 rounded-3xl p-4 flex justify-between items-center">
+                            <div>
+                                <span class="text-[10px] font-extrabold uppercase text-slate-400">Total Arrecadado</span>
+                                <p class="text-base font-black text-slate-800">R$ ${osc.balance.receitas.toLocaleString('pt-BR')}</p>
+                            </div>
+                            <button onclick="simulatePdfDownload()" class="px-4 py-2 bg-white rounded-xl text-xs font-bold text-brand-blue border border-slate-200 flex items-center gap-1.5 shadow-sm active:scale-95 transition">
+                                <i class="fa-solid fa-file-pdf"></i> PDF Auditoria
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Aba Comentários/Avaliações -->
+                    <div id="tab-reviews" class="hidden space-y-3">
+                        <div class="bg-white rounded-3xl p-4 border border-slate-100 shadow-sm">
+                            <div class="flex justify-between items-center mb-4">
+                                <h3 class="font-bold text-xs text-slate-400 uppercase tracking-wider">Últimos Feedbacks</h3>
+                                <button onclick="openReviewModal()" class="text-xs font-bold text-brand-emerald"><i class="fa-solid fa-plus mr-1"></i>Avaliar</button>
+                            </div>
+                            <div class="space-y-3">
+                                ${osc.reviews.map(r => `
+                                    <div class="border-b border-slate-50 pb-3 last:border-0 last:pb-0">
+                                        <div class="flex justify-between items-center">
+                                            <span class="font-bold text-xs text-slate-800">${r.user}</span>
+                                            <div class="text-[10px] text-brand-accent">
+                                                ${Array(r.rating).fill('<i class="fa-solid fa-star"></i>').join('')}
+                                            </div>
+                                        </div>
+                                        <p class="text-xs text-slate-500 mt-1 leading-relaxed">${r.text}</p>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Botão CTA de Doação Fixo do Doador -->
+                <div class="p-4 bg-white border-t border-slate-100 mt-auto sticky bottom-0 z-30">
+                    <button onclick="openDonationModal(false)" class="w-full py-4 bg-brand-emerald hover:bg-emerald-600 active:scale-[0.98] transition-all text-slate-950 font-black rounded-2xl text-sm flex items-center justify-center gap-2 shadow-lg shadow-emerald-500/10">
+                        <i class="fa-solid fa-hand-holding-heart text-base"></i> APOIAR ESTA OSC agora
+                    </button>
+                </div>
+            `;
+            
+            // Inicializar gráfico após o DOM renderizar
+            setTimeout(() => {
+                renderFinanceChart(osc);
+            }, 50);
+        }
+
+        function renderPostsTab(oscPosts) {
+            if (oscPosts.length === 0) {
+                return `
+                    <div class="text-center py-8">
+                        <p class="text-xs text-slate-400">Nenhuma postagem recente realizada.</p>
+                    </div>
+                `;
+            }
+
+            return oscPosts.map(p => `
+                <div class="bg-white rounded-3xl overflow-hidden border border-slate-100 shadow-sm">
+                    <div class="h-44 w-full bg-slate-50 overflow-hidden">
+                        <img src="${p.img}" alt="${p.title}" class="w-full h-full object-cover">
+                    </div>
+                    <div class="p-4">
+                        <span class="text-[10px] font-bold text-brand-emerald">${p.date}</span>
+                        <h4 class="font-bold text-slate-800 text-sm mt-1">${p.title}</h4>
+                        <p class="text-xs text-slate-500 mt-1.5 leading-relaxed">${p.desc}</p>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function renderGroupsPage(container) {
+            container.innerHTML = `
+                <div class="p-5 bg-white border-b border-slate-100 flex items-center justify-between sticky top-0 z-30">
+                    <div>
+                        <p class="text-xs text-slate-400 font-semibold uppercase tracking-wider">Inteligência de Rede</p>
+                        <h2 class="text-lg font-extrabold text-slate-800">Grupos de Doação</h2>
+                    </div>
+                    <i class="fa-solid fa-layer-group text-brand-blue text-xl"></i>
+                </div>
+
+                <div class="p-4 space-y-4">
+                    <div class="bg-white rounded-3xl p-4 border border-slate-100 shadow-sm">
+                        <p class="text-xs text-slate-500 leading-relaxed">
+                            Uma solução exclusiva para quem deseja apoiar múltiplas causas ao mesmo tempo. Selecione um grupo temático e divida o seu impacto de maneira <strong>isomórfica e inteligente</strong>.
+                        </p>
+                    </div>
+
+                    <!-- Card Grupo Animais -->
+                    <div class="bg-white rounded-3xl border border-slate-100 shadow-sm overflow-hidden">
+                        <div class="h-28 bg-gradient-to-r from-emerald-400 to-teal-500 p-5 flex flex-col justify-end text-white">
+                            <h3 class="font-extrabold text-base"><i class="fa-solid fa-paw mr-1.5"></i> Proteção Animal Integrada</h3>
+                            <p class="text-[11px] text-emerald-50%">Cães, gatos, cavalos e reabilitação florestal.</p>
+                        </div>
+                        <div class="p-4">
+                            <p class="text-xs text-slate-500 leading-relaxed mb-4">Ao apoiar este grupo, sua doação é dividida igualmente entre as 4 maiores ONGs certificadas de animais.</p>
+                            <div class="flex items-center justify-between">
+                                <span class="text-[10px] text-slate-400 font-bold uppercase"><i class="fa-solid fa-building-ngo mr-1"></i> 4 ONGs no Bucket</span>
+                                <button onclick="openDonationModal(true, 'Proteção Animal')" class="px-4 py-2.5 bg-brand-emerald text-slate-950 rounded-xl text-xs font-bold active:scale-95 transition flex items-center gap-1">
+                                    Apoiar Grupo <i class="fa-solid fa-arrow-right"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Card Grupo Educação -->
+                    <div class="bg-white rounded-3xl border border-slate-100 shadow-sm overflow-hidden">
+                        <div class="h-28 bg-gradient-to-r from-blue-400 to-indigo-500 p-5 flex flex-col justify-end text-white">
+                            <h3 class="font-extrabold text-base"><i class="fa-solid fa-graduation-cap mr-1.5"></i> Sementes da Educação</h3>
+                            <p class="text-[11px] text-blue-50%">Inclusão escolar, tecnologia e artes para favelas.</p>
+                        </div>
+                        <div class="p-4">
+                            <p class="text-xs text-slate-500 leading-relaxed mb-4">Distribuição inteligente para o ecossistema educacional periférico.</p>
+                            <div class="flex items-center justify-between">
+                                <span class="text-[10px] text-slate-400 font-bold uppercase"><i class="fa-solid fa-building-ngo mr-1"></i> 3 ONGs no Bucket</span>
+                                <button onclick="openDonationModal(true, 'Sementes da Educação')" class="px-4 py-2.5 bg-brand-emerald text-slate-950 rounded-xl text-xs font-bold active:scale-95 transition flex items-center gap-1">
+                                    Apoiar Grupo <i class="fa-solid fa-arrow-right"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderHistoryPage(container) {
+            container.innerHTML = `
+                <div class="p-5 bg-white border-b border-slate-100 sticky top-0 z-30 flex justify-between items-center">
+                    <div>
+                        <p class="text-xs text-slate-400 font-semibold uppercase tracking-wider">Histórico</p>
+                        <h2 class="text-lg font-extrabold text-slate-800">Minhas Doações</h2>
+                    </div>
+                    <i class="fa-solid fa-clock-rotate-left text-slate-400"></i>
+                </div>
+
+                <div class="p-4 space-y-3">
+                    ${state.myDonations.map(don => `
+                        <div class="bg-white rounded-2xl p-4 border border-slate-100 shadow-sm flex justify-between items-center">
+                            <div>
+                                <h4 class="font-bold text-xs text-slate-800">${don.oscName}</h4>
+                                <span class="text-[10px] text-slate-400 font-medium">${don.date} • via ${don.type}</span>
+                            </div>
+                            <span class="text-sm font-black text-brand-emerald">+ R$ ${don.value},00</span>
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+        }
+
+        function renderDonorProfilePage(container) {
+            container.innerHTML = `
+                <div class="p-5 bg-white border-b border-slate-100 sticky top-0 z-30 text-center">
+                    <h2 class="text-lg font-extrabold text-slate-800">Minha Conta</h2>
+                </div>
+
+                <div class="p-4 flex flex-col items-center">
+                    <div class="w-24 h-24 bg-brand-blue rounded-full border-4 border-white shadow-xl flex items-center justify-center text-white text-3xl font-black mb-3">
+                        D
+                    </div>
+                    <h3 class="font-extrabold text-base text-slate-800">Doador Voluntário</h3>
+                    <p class="text-xs text-slate-400">Nível 3: Guardião da Transparência</p>
+
+                    <div class="w-full mt-6 bg-white rounded-3xl p-5 border border-slate-100 space-y-4">
+                        <div class="flex justify-between items-center text-xs">
+                            <span class="text-slate-500 font-semibold">Total Doador Anual</span>
+                            <span class="font-black text-slate-800">R$ 1.250,00</span>
+                        </div>
+                        <div class="flex justify-between items-center text-xs">
+                            <span class="text-slate-500 font-semibold">Causas Apoiadas</span>
+                            <span class="font-black text-slate-800">3 Diferentes</span>
+                        </div>
+                        <div class="flex justify-between items-center text-xs">
+                            <span class="text-slate-500 font-semibold">Último Fechamento</span>
+                            <span class="font-black text-brand-emerald">Balanços OK <i class="fa-solid fa-circle-check"></i></span>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // --- TRILHA 2: OSC FLOWS (GERENCIAMENTO) ---
+        function renderOscFlow(container) {
+            switch (state.oscPage) {
+                case 'dashboard':
+                    renderOscDashboard(container);
+                    break;
+                case 'post':
+                    renderOscPostCreation(container);
+                    break;
+                case 'financials':
+                    renderOscFinancials(container);
+                    break;
+                case 'profile':
+                    renderOscProfilePage(container);
+                    break;
+            }
+        }
+
+        function renderOscDashboard(container) {
+            container.innerHTML = `
+                <!-- Top Panel da OSC -->
+                <div class="p-5 bg-white border-b border-slate-100 sticky top-0 z-30 flex justify-between items-center">
+                    <div>
+                        <p class="text-[10px] text-brand-emerald font-extrabold uppercase">Painel do Administrador</p>
+                        <h2 class="text-lg font-extrabold text-slate-800">Pat Felizes <i class="fa-solid fa-circle-check text-blue-500 text-sm"></i></h2>
+                    </div>
+                    <span class="text-xs bg-brand-emerald/10 text-brand-emerald px-3 py-1 rounded-full font-bold">Diamante</span>
+                </div>
+
+                <!-- Card de Status do Rank (Gamificação/Auditoria) -->
+                <div class="p-4">
+                    <div class="bg-gradient-to-br from-slate-900 to-slate-850 rounded-3xl p-5 text-white shadow-xl relative overflow-hidden">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Score de Confiança</span>
+                                <h3 class="text-3xl font-black text-white mt-1">9.8/10</h3>
+                            </div>
+                            <div class="text-3xl text-brand-accent">
+                                <i class="fa-solid fa-star-half-stroke"></i>
+                            </div>
+                        </div>
+                        <div class="mt-4">
+                            <div class="w-full bg-slate-700 h-2.5 rounded-full overflow-hidden">
+                                <div class="bg-brand-emerald h-full rounded-full" style="width: 98%"></div>
+                            </div>
+                            <p class="text-[10px] text-slate-400 mt-2 leading-relaxed">Continue postando fotos das ações de campo para manter o status Diamante!</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Estatísticas de Arrecadação -->
+                <div class="px-4 pb-4">
+                    <div class="grid grid-cols-2 gap-3">
+                        <div class="bg-white rounded-3xl p-4 border border-slate-100 shadow-sm">
+                            <span class="text-[10px] text-slate-400 font-bold block uppercase">Arrecadação Mês</span>
+                            <span class="text-base font-black text-slate-800 mt-1 block">R$ 14.500</span>
+                            <span class="text-[10px] text-brand-emerald font-semibold mt-1 inline-block"><i class="fa-solid fa-circle-arrow-up"></i> +12% vs anterior</span>
+                        </div>
+                        <div class="bg-white rounded-3xl p-4 border border-slate-100 shadow-sm">
+                            <span class="text-[10px] text-slate-400 font-bold block uppercase">Metas Mensais</span>
+                            <span class="text-base font-black text-slate-800 mt-1 block">R$ 20.000</span>
+                            <span class="text-[10px] text-slate-400 font-semibold mt-1 inline-block">72% Concluído</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Feed de Postagens da Própria OSC -->
+                <div class="px-4 pb-4">
+                    <div class="flex justify-between items-center mb-4">
+                        <h3 class="font-extrabold text-slate-700 text-sm">Nossas Postagens Ativas</h3>
+                        <button onclick="navigateOsc('post')" class="text-xs font-bold text-brand-emerald"><i class="fa-solid fa-plus"></i> Nova Foto</button>
+                    </div>
+                    <div class="space-y-4">
+                        ${renderPostsTab(state.posts.filter(p => p.oscId === 1))}
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderOscPostCreation(container) {
+            container.innerHTML = `
+                <div class="p-5 bg-white border-b border-slate-100 sticky top-0 z-30 flex items-center justify-between">
+                    <h2 class="text-lg font-extrabold text-slate-800">Publicar Ação</h2>
+                    <button onclick="navigateOsc('dashboard')" class="text-slate-400"><i class="fa-solid fa-xmark"></i></button>
+                </div>
+
+                <div class="p-5 space-y-4">
+                    <div>
+                        <label class="block text-xs font-bold uppercase text-slate-400 mb-1.5">Título da Postagem</label>
+                        <input type="text" id="post-title" placeholder="Ex: Entrega das rações ou Cirurgia realizada" class="w-full bg-white border border-slate-200 rounded-xl px-4 py-3 text-xs text-slate-800 outline-none focus:border-brand-emerald">
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-bold uppercase text-slate-400 mb-1.5">Descrição/Legenda de Impacto</label>
+                        <textarea id="post-desc" rows="4" placeholder="Conte aos doadores o resultado da ação no campo..." class="w-full bg-white border border-slate-200 rounded-xl px-4 py-3 text-xs text-slate-800 outline-none focus:border-brand-emerald resize-none"></textarea>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-bold uppercase text-slate-400 mb-1.5">Imagem de Capa (Simulação)</label>
+                        <div class="w-full h-36 border-2 border-dashed border-slate-200 rounded-xl flex flex-col justify-center items-center bg-slate-100 cursor-pointer hover:bg-slate-50 transition" onclick="selectPostPresetImg()">
+                            <i class="fa-solid fa-camera text-2xl text-slate-400 mb-1"></i>
+                            <span class="text-xs font-semibold text-slate-500">Selecionar Foto de Exemplo</span>
+                            <span id="selected-img-status" class="text-[9px] text-brand-emerald mt-1 font-bold"></span>
+                        </div>
+                    </div>
+
+                    <button onclick="publishPost()" class="w-full py-4 bg-brand-emerald text-slate-950 font-black rounded-2xl text-xs flex items-center justify-center gap-1.5 shadow-lg shadow-emerald-500/10 active:scale-95 transition">
+                        <i class="fa-solid fa-paper-plane"></i> Publicar no Feed do Doador
+                    </button>
+                </div>
+            `;
+        }
+
+        // Simula a seleção de uma imagem mockada
+        let presetImgUrl = 'https://images.unsplash.com/photo-1548199973-03cce0bbc87b?auto=format&fit=crop&q=80&w=400';
+        function selectPostPresetImg() {
+            document.getElementById('selected-img-status').innerText = 'Foto "Ação de Resgate.jpg" Selecionada!';
+            triggerToast('Imagem Mockada!', 'Preparamos uma bela foto de um cachorrinho para sua postagem.');
+        }
+
+        function publishPost() {
+            const title = document.getElementById('post-title').value;
+            const desc = document.getElementById('post-desc').value;
+
+            if (!title || !desc) {
+                triggerToast('Campos Incompletos', 'Preencha título e legenda.', 'error');
+                return;
+            }
+
+            state.posts.unshift({
+                id: Date.now(),
+                oscId: 1, // Patinhas Felizes
+                title: title,
+                date: 'Agora mesmo',
+                desc: desc,
+                img: presetImgUrl
+            });
+
+            triggerToast('Ação Publicada!', 'Sua postagem já está disponível para todos os doadores.');
+            navigateOsc('dashboard');
+        }
+
+        function renderOscFinancials(container) {
+            container.innerHTML = `
+                <div class="p-5 bg-white border-b border-slate-100 sticky top-0 z-30">
+                    <p class="text-[10px] text-brand-emerald font-extrabold uppercase">Prestação de Contas Simplificada</p>
+                    <h2 class="text-lg font-extrabold text-slate-800">Transparência Ativa</h2>
+                </div>
+
+                <div class="p-5 space-y-4">
+                    <div class="bg-slate-100 rounded-3xl p-4">
+                        <h3 class="font-extrabold text-xs text-slate-700 mb-3">Lançamento de Despesa Financeira</h3>
+                        
+                        <div class="space-y-3">
+                            <div>
+                                <label class="block text-[10px] font-bold text-slate-400 mb-1">Categoria de Custo</label>
+                                <select id="expense-cat" class="w-full bg-white border border-slate-200 rounded-xl px-3 py-2 text-xs outline-none focus:border-brand-emerald">
+                                    <option value="Veterinário & Clínicas">Veterinário & Clínicas</option>
+                                    <option value="Ração & Nutrição">Ração & Nutrição</option>
+                                    <option value="Infraestrutura & Resgate">Infraestrutura & Resgate</option>
+                                    <option value="Administração & Equipe">Administração & Equipe</option>
+                                </select>
+                            </div>
+
+                            <div>
+                                <label class="block text-[10px] font-bold text-slate-400 mb-1">Valor da Nota Fiscal (R$)</label>
+                                <input type="number" id="expense-val" placeholder="Ex: 1500" class="w-full bg-white border border-slate-200 rounded-xl px-3 py-2 text-xs outline-none focus:border-brand-emerald">
+                            </div>
+
+                            <button onclick="registerExpense()" class="w-full py-2.5 bg-slate-800 text-white font-extrabold rounded-xl text-xs flex items-center justify-center gap-1.5 hover:bg-slate-700 active:scale-95 transition">
+                                <i class="fa-solid fa-plus-circle"></i> Registrar Gasto
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Log Simplificado de Lançamentos -->
+                    <div class="bg-white rounded-3xl p-4 border border-slate-100 shadow-sm">
+                        <h3 class="font-extrabold text-xs text-slate-700 mb-3">Auditoria Digital</h3>
+                        <p class="text-[11px] text-slate-500 mb-4">Adicionar gastos atualiza a distribuição percentual de recursos visualizada pelos doadores na mesma hora.</p>
+                        
+                        <div class="text-center py-4 bg-slate-50 rounded-xl">
+                            <span class="text-xs font-bold text-brand-emerald"><i class="fa-solid fa-cloud-arrow-up"></i> Arquivo Fiscal Integrado</span>
+                            <p class="text-[10px] text-slate-400 mt-0.5">Sincronizado automaticamente com CNPJ</p>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function registerExpense() {
+            const cat = document.getElementById('expense-cat').value;
+            const val = parseFloat(document.getElementById('expense-val').value);
+
+            if (isNaN(val) || val <= 0) {
+                triggerToast('Valor Inválido', 'Por favor insira uma quantia real.', 'error');
+                return;
+            }
+
+            // Atualiza o estado simulando banco de dados reativo
+            const patFelizes = state.oscs.find(o => o.id === 1);
+            if (patFelizes) {
+                patFelizes.balance.despesas[cat] = (patFelizes.balance.despesas[cat] || 0) + val;
+                patFelizes.balance.receitas += val; // Simula aumento de entrada/saída equivalente
+            }
+
+            triggerToast('Despesa Sincronizada', `R$ ${val.toLocaleString('pt-BR')} adicionados a ${cat}.`);
+            document.getElementById('expense-val').value = '';
+        }
+
+        function renderOscProfilePage(container) {
+            container.innerHTML = `
+                <div class="p-5 bg-white border-b border-slate-100 sticky top-0 z-30 text-center">
+                    <h2 class="text-lg font-extrabold text-slate-800">Minha Conta OSC</h2>
+                </div>
+
+                <div class="p-5 space-y-4">
+                    <div class="flex items-center gap-4 p-4 bg-slate-50 rounded-2xl">
+                        <div class="w-16 h-16 rounded-xl overflow-hidden border border-slate-100 bg-white">
+                            <img src="${state.oscs[0].logo}" alt="Logo" class="w-full h-full object-cover">
+                        </div>
+                        <div>
+                            <h3 class="font-bold text-sm text-slate-800">Instituto Patinhas Felizes</h3>
+                            <p class="text-[10px] text-slate-400 font-medium">CNPJ: 12.345.678/0001-90</p>
+                        </div>
+                    </div>
+
+                    <div class="bg-white rounded-2xl p-4 border border-slate-100 shadow-sm space-y-3">
+                        <div class="flex justify-between items-center text-xs">
+                            <span class="text-slate-500 font-semibold">Integridade do Rank</span>
+                            <span class="font-extrabold text-brand-emerald">Excelente (Diamante)</span>
+                        </div>
+                        <div class="flex justify-between items-center text-xs">
+                            <span class="text-slate-500 font-semibold">Prestações Concluídas</span>
+                            <span class="font-extrabold text-slate-800">12 de 12 (100%)</span>
+                        </div>
+                        <div class="flex justify-between items-center text-xs">
+                            <span class="text-slate-500 font-semibold">Suporte de Equipe</span>
+                            <span class="text-brand-blue font-bold">Ativo <i class="fa-solid fa-headset"></i></span>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // --- MOTOR DE TABS NO PERFIL DA OSC (DOADOR VIEW) ---
+        function switchTab(tabId) {
+            // Toggles de layout
+            document.getElementById('tab-feed').classList.add('hidden');
+            document.getElementById('tab-finance').classList.add('hidden');
+            document.getElementById('tab-reviews').classList.add('hidden');
+
+            document.getElementById('tab-btn-feed').className = "flex-1 py-3.5 text-xs font-bold text-slate-400 text-center";
+            document.getElementById('tab-btn-finance').className = "flex-1 py-3.5 text-xs font-bold text-slate-400 text-center";
+            document.getElementById('tab-btn-reviews').className = "flex-1 py-3.5 text-xs font-bold text-slate-400 text-center";
+
+            if (tabId === 'feed') {
+                document.getElementById('tab-feed').classList.remove('hidden');
+                document.getElementById('tab-btn-feed').className = "flex-1 py-3.5 text-xs font-bold text-brand-emerald border-b-2 border-brand-emerald text-center";
+            } else if (tabId === 'finance') {
+                document.getElementById('tab-finance').classList.remove('hidden');
+                document.getElementById('tab-btn-finance').className = "flex-1 py-3.5 text-xs font-bold text-brand-emerald border-b-2 border-brand-emerald text-center";
+                // Renderizar gráfico de forma responsiva ao abrir a aba
+                const osc = state.oscs.find(o => o.id === state.selectedOscId);
+                renderFinanceChart(osc);
+            } else if (tabId === 'reviews') {
+                document.getElementById('tab-reviews').classList.remove('hidden');
+                document.getElementById('tab-btn-reviews').className = "flex-1 py-3.5 text-xs font-bold text-brand-emerald border-b-2 border-brand-emerald text-center";
+            }
+        }
+
+        // --- SISTEMA DE CHART.JS ---
+        let currentChart = null;
+        function renderFinanceChart(osc) {
+            const ctx = document.getElementById('financeChart');
+            if (!ctx) return;
+
+            if (currentChart) {
+                currentChart.destroy();
+            }
+
+            const dataKeys = Object.keys(osc.balance.despesas);
+            const dataValues = Object.values(osc.balance.despesas);
+            const colors = dataKeys.map(k => getColorForKey(k));
+
+            currentChart = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: dataKeys,
+                    datasets: [{
+                        data: dataValues,
+                        backgroundColor: colors,
+                        borderWidth: 0,
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    },
+                    cutout: '65%'
+                }
+            });
+        }
+
+        function getColorForKey(key) {
+            const map = {
+                'Veterinário & Clínicas': '#10B981',
+                'Ração & Nutrição': '#3B82F6',
+                'Infraestrutura & Resgate': '#F59E0B',
+                'Administração & Equipe': '#EF4444',
+                'Professores & Tutores': '#10B981',
+                'Material Didático': '#3B82F6',
+                'Alimentação': '#F59E0B',
+                'Equipamentos de TI': '#EF4444',
+                'Logística & Combustível': '#10B981',
+                'Cozinhas Comunitárias': '#3B82F6',
+                'Embalagens Biodegradáveis': '#F59E0B',
+                'Custos de Operação': '#EF4444'
+            };
+            return map[key] || '#94A3B8';
+        }
+
+        // --- BARRA DE NAVEGAÇÃO DINÂMICA ---
+        function renderBottomNav(role) {
+            const nav = document.getElementById('bottom-nav');
+            nav.innerHTML = '';
+
+            if (role === 'donor') {
+                nav.innerHTML = `
+                    <button onclick="setDonorPage('explore')" class="flex flex-col items-center gap-1 text-[10px] font-bold ${state.donorPage === 'explore' || state.donorPage === 'detail' ? 'text-brand-emerald' : 'text-slate-400'}">
+                        <i class="fa-solid fa-compass text-lg"></i> Explorar
+                    </button>
+                    <button onclick="setDonorPage('groups')" class="flex flex-col items-center gap-1 text-[10px] font-bold ${state.donorPage === 'groups' ? 'text-brand-emerald' : 'text-slate-400'}">
+                        <i class="fa-solid fa-layer-group text-lg"></i> Grupos
+                    </button>
+                    <button onclick="setDonorPage('history')" class="flex flex-col items-center gap-1 text-[10px] font-bold ${state.donorPage === 'history' ? 'text-brand-emerald' : 'text-slate-400'}">
+                        <i class="fa-solid fa-clock-rotate-left text-lg"></i> Doações
+                    </button>
+                    <button onclick="setDonorPage('profile')" class="flex flex-col items-center gap-1 text-[10px] font-bold ${state.donorPage === 'profile' ? 'text-brand-emerald' : 'text-slate-400'}">
+                        <i class="fa-solid fa-user text-lg"></i> Minha Conta
+                    </button>
+                `;
+            } else {
+                nav.innerHTML = `
+                    <button onclick="setOscPage('dashboard')" class="flex flex-col items-center gap-1 text-[10px] font-bold ${state.oscPage === 'dashboard' ? 'text-brand-emerald' : 'text-slate-400'}">
+                        <i class="fa-solid fa-chart-line text-lg"></i> Painel
+                    </button>
+                    <button onclick="setOscPage('post')" class="flex flex-col items-center gap-1 text-[10px] font-bold ${state.oscPage === 'post' ? 'text-brand-emerald' : 'text-slate-400'}">
+                        <i class="fa-solid fa-square-plus text-lg"></i> Nova Foto
+                    </button>
+                    <button onclick="setOscPage('financials')" class="flex flex-col items-center gap-1 text-[10px] font-bold ${state.oscPage === 'financials' ? 'text-brand-emerald' : 'text-slate-400'}">
+                        <i class="fa-solid fa-file-invoice-dollar text-lg"></i> Balanços
+                    </button>
+                    <button onclick="setOscPage('profile')" class="flex flex-col items-center gap-1 text-[10px] font-bold ${state.oscPage === 'profile' ? 'text-brand-emerald' : 'text-slate-400'}">
+                        <i class="fa-solid fa-hotel text-lg"></i> Perfil OSC
+                    </button>
+                `;
+            }
+        }
+
+        // --- SISTEMAS DE FILTRO & BUSCA ---
+        function setCategory(cat) {
+            state.selectedCategory = cat;
+            renderApp();
+        }
+
+        function handleSearch(input) {
+            state.searchQuery = input.value;
+            // Atualizar grid mantendo o foco de busca
+            document.getElementById('osc-list').innerHTML = renderOscListCards();
+        }
+
+        function openOscDetail(oscId) {
+            state.selectedOscId = oscId;
+            state.donorPage = 'detail';
+            renderApp();
+        }
+
+        function setDonorPage(page) {
+            state.donorPage = page;
+            renderApp();
+        }
+
+        function setOscPage(page) {
+            state.oscPage = page;
+            renderApp();
+        }
+
+        function navigateDonor(page) {
+            state.donorPage = page;
+            renderApp();
+        }
+
+        function navigateOsc(page) {
+            state.oscPage = page;
+            renderApp();
+        }
+
+        function simulatePdfDownload() {
+            triggerToast('Exportação de PDF', 'Seu arquivo de auditoria foi gerado e baixado no simulador.');
+        }
+
+        // --- MODAL DE DOAÇÃO SLIDE-UP DO PROTÓTIPO ---
+        function openDonationModal(isGroup, targetName = '') {
+            const osc = state.oscs.find(o => o.id === state.selectedOscId);
+            const targetLabel = isGroup ? `Grupo: ${targetName}` : osc.name;
+
+            // Criar modal do nada para garantir reatividade e sem conflito de ids
+            const modal = document.createElement('div');
+            modal.id = 'donation-sheet';
+            modal.className = "absolute inset-0 bg-black/60 z-50 flex flex-col justify-end transition-opacity duration-300";
+            modal.innerHTML = `
+                <div class="bg-white rounded-t-[32px] p-6 space-y-5 transform translate-y-0 transition-transform duration-300">
+                    <div class="flex justify-between items-center">
+                        <span class="text-[10px] text-brand-emerald font-extrabold uppercase">Doação Segura</span>
+                        <button onclick="closeDonationModal()" class="w-8 h-8 bg-slate-100 rounded-full flex items-center justify-center text-slate-500"><i class="fa-solid fa-xmark"></i></button>
+                    </div>
+
+                    <div>
+                        <p class="text-xs text-slate-400">Apoiando o projeto</p>
+                        <h4 class="font-extrabold text-sm text-slate-800">${targetLabel}</h4>
+                    </div>
+
+                    <!-- Botões Rápidos de Valor -->
+                    <div class="grid grid-cols-3 gap-3">
+                        <button onclick="selectValue(20)" id="btn-val-20" class="py-3 bg-slate-50 hover:bg-slate-100 border border-slate-200 text-xs font-bold rounded-xl text-slate-700 active:scale-95 transition">R$ 20</button>
+                        <button onclick="selectValue(50)" id="btn-val-50" class="py-3 bg-slate-50 hover:bg-slate-100 border border-slate-200 text-xs font-bold rounded-xl text-slate-700 active:scale-95 transition">R$ 50</button>
+                        <button onclick="selectValue(100)" id="btn-val-100" class="py-3 bg-slate-50 hover:bg-slate-100 border border-slate-200 text-xs font-bold rounded-xl text-slate-700 active:scale-95 transition">R$ 100</button>
+                    </div>
+
+                    <!-- Valor Personalizado -->
+                    <div class="relative flex items-center bg-slate-50 rounded-2xl border border-slate-200 px-4 py-3">
+                        <span class="text-xs font-extrabold text-slate-400 mr-2">R$</span>
+                        <input type="number" id="custom-donation-val" placeholder="Outro valor..." class="bg-transparent border-none text-xs outline-none w-full font-bold text-slate-800">
+                    </div>
+
+                    <!-- Seleção de Compartilhamento/Ponte (Diferencial UX) -->
+                    ${isGroup ? `
+                        <div class="p-3 bg-brand-emerald/10 border border-brand-emerald/20 rounded-xl">
+                            <span class="text-[9px] font-extrabold text-brand-emerald uppercase flex items-center gap-1"><i class="fa-solid fa-share-nodes"></i> Impacto Multiplicado</span>
+                            <p class="text-[10px] text-slate-600 leading-relaxed mt-1">Este grupo dividirá o valor doado de forma 100% igualitária entre as OSCs participantes.</p>
+                        </div>
+                    ` : `
+                        <div class="flex items-center justify-between p-3 bg-slate-50 rounded-xl border border-slate-200">
+                            <div>
+                                <span class="text-[10px] font-extrabold text-slate-800">Fundo Ponte do Bem?</span>
+                                <p class="text-[9px] text-slate-400 leading-relaxed">Adicione R$ 2,00 para garantir servidores e expansão do aplicativo.</p>
+                            </div>
+                            <input type="checkbox" checked class="w-4 h-4 text-brand-emerald accent-brand-emerald">
+                        </div>
+                    `}
+
+                    <button onclick="confirmDonation('${targetLabel}')" class="w-full py-4 bg-brand-emerald text-slate-950 font-black rounded-2xl text-xs flex items-center justify-center gap-1.5 shadow-lg active:scale-95 transition">
+                        <i class="fa-solid fa-check"></i> CONFIRMAR E PAGAR VIA PIX
+                    </button>
+                </div>
+            `;
+
+            document.getElementById('app-container').parentElement.appendChild(modal);
+        }
+
+        let selectedValueAmount = 0;
+        function selectValue(val) {
+            selectedValueAmount = val;
+            document.getElementById('custom-donation-val').value = val;
+            
+            // Reset de estilos dos botões
+            [20, 50, 100].forEach(v => {
+                document.getElementById(`btn-val-${v}`).className = "py-3 bg-slate-50 hover:bg-slate-100 border border-slate-200 text-xs font-bold rounded-xl text-slate-700 active:scale-95 transition";
+            });
+            document.getElementById(`btn-val-${val}`).className = "py-3 bg-brand-emerald border border-brand-emerald text-xs font-black rounded-xl text-slate-950 active:scale-95 transition";
+        }
+
+        function closeDonationModal() {
+            const modal = document.getElementById('donation-sheet');
+            if (modal) modal.remove();
+        }
+
+        function confirmDonation(targetName) {
+            const inputVal = parseFloat(document.getElementById('custom-donation-val').value);
+            const val = isNaN(inputVal) ? selectedValueAmount : inputVal;
+
+            if (!val || val <= 0) {
+                triggerToast('Selecione um valor', 'Você precisa definir um valor para doar.', 'error');
+                return;
+            }
+
+            // Simula adição no histórico de doações
+            state.myDonations.unshift({
+                id: Date.now(),
+                oscName: targetName,
+                value: val,
+                date: 'Hoje',
+                type: 'Pix'
+            });
+
+            closeDonationModal();
+            
+            // Tela de Sucesso
+            const container = document.getElementById('app-container');
+            container.innerHTML = `
+                <div class="flex-1 flex flex-col items-center justify-center p-6 text-center bg-white h-full">
+                    <div class="w-20 h-20 bg-brand-emerald/10 text-brand-emerald rounded-full flex items-center justify-center text-4xl mb-4 animate-bounce">
+                        <i class="fa-solid fa-heart-circle-check"></i>
+                    </div>
+                    <span class="text-[10px] text-brand-emerald font-extrabold uppercase">Transação Aprovada</span>
+                    <h2 class="text-xl font-black text-slate-800 mt-2">Muito Obrigado!</h2>
+                    <p class="text-xs text-slate-500 max-w-[240px] mt-2 leading-relaxed">
+                        Sua doação de <strong>R$ ${val.toLocaleString('pt-BR')}</strong> foi enviada com sucesso para <strong>${targetName}</strong>.
+                    </p>
+                    <div class="mt-6 w-full p-4 bg-slate-50 rounded-2xl text-[11px] text-slate-400 leading-relaxed border border-slate-100">
+                        O recibo fiscal e o feed de acompanhamento de impacto foram encaminhados ao seu e-mail cadastrado.
+                    </div>
+                    <button onclick="navigateDonor('explore')" class="mt-6 w-full py-3 bg-slate-800 text-white font-extrabold rounded-xl text-xs active:scale-95 transition">
+                        Voltar ao Marketplace
+                    </button>
+                </div>
+            `;
+            triggerToast('Obrigado!', `Doação de R$ ${val} confirmada.`);
+        }
+
+        // --- SISTEMA SIMPLIFICADO DE REVIEWS/AVALIAÇÃO ---
+        function openReviewModal() {
+            const modal = document.createElement('div');
+            modal.id = 'review-sheet';
+            modal.className = "absolute inset-0 bg-black/60 z-50 flex flex-col justify-end";
+            modal.innerHTML = `
+                <div class="bg-white rounded-t-[32px] p-6 space-y-4">
+                    <div class="flex justify-between items-center">
+                        <h4 class="font-extrabold text-sm text-slate-800">Avaliar Organização</h4>
+                        <button onclick="closeReviewModal()" class="w-8 h-8 bg-slate-100 rounded-full flex items-center justify-center text-slate-500"><i class="fa-solid fa-xmark"></i></button>
+                    </div>
+                    <div>
+                        <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">Seu Nome</label>
+                        <input type="text" id="review-user" placeholder="Como deseja aparecer..." class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">Seu Feedback</label>
+                        <textarea id="review-text" rows="3" placeholder="Sua experiência ou agradecimento..." class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs outline-none resize-none"></textarea>
+                    </div>
+                    <button onclick="submitReview()" class="w-full py-3 bg-brand-emerald text-slate-950 font-black rounded-xl text-xs">Enviar Avaliação</button>
+                </div>
+            `;
+            document.getElementById('app-container').parentElement.appendChild(modal);
+        }
+
+        function closeReviewModal() {
+            const modal = document.getElementById('review-sheet');
+            if (modal) modal.remove();
+        }
+
+        function submitReview() {
+            const user = document.getElementById('review-user').value;
+            const text = document.getElementById('review-text').value;
+
+            if (!user || !text) {
+                triggerToast('Aviso', 'Preencha todos os campos.', 'error');
+                return;
+            }
+
+            const osc = state.oscs.find(o => o.id === state.selectedOscId);
+            if (osc) {
+                osc.reviews.unshift({
+                    user: user,
+                    text: text,
+                    rating: 5
+                });
+                osc.reviewsCount += 1;
+            }
+
+            closeReviewModal();
+            triggerToast('Avaliação Registrada', 'Seu comentário ajuda a qualificar o Rank da OSC.');
+            switchTab('reviews');
+        }
+
+        // --- INICIALIZAÇÃO DO APP ---
+        window.onload = function() {
+            renderApp();
+            updateSystemTime();
+        }
+    </script>
+</body>
+</html>
+
